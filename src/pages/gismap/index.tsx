@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
-import { Card, theme } from 'antd';
+import { Card, theme, Button } from 'antd';
 import React from 'react';
 import './index.less';
 
@@ -14,7 +14,7 @@ const InfoCard: React.FC<{
   index: number;
   desc: string;
   href: string;
-}> = ({ title, href, index, desc }) => {
+}> = ({ title, index, desc }) => {
   const { useToken } = theme;
 
   const { token } = useToken();
@@ -77,9 +77,10 @@ const InfoCard: React.FC<{
       >
         {desc}
       </div>
-      <a href={href} target="_blank" rel="noreferrer">
+      <Button>fdsa</Button>
+      {/* <a href={href} target="_blank" rel="noreferrer">
         了解更多 {'>'}
-      </a>
+      </a> */}
     </div>
   );
 };
