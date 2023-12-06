@@ -23,6 +23,12 @@ export default [
     ],
   },
   {
+    path: '/gismap',
+    name: 'gismap',
+    icon: 'smile',
+    component: './gismap',
+  },
+  {
     path: '/welcome',
     name: 'welcome',
     icon: 'smile',
