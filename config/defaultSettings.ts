@@ -29,6 +29,7 @@ const Settings: ProLayoutProps & {
   contentStyle: {
     // backgroundColor: "red",
     height: 'calc(100vh - 56px)',
+    padding: '0px',
   },
 };
 

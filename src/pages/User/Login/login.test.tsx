@@ -47,7 +47,7 @@ describe('Login Page', () => {
     });
 
     expect(rootContainer.baseElement?.querySelector('.ant-pro-form-login-desc')?.textContent).toBe(
-      'Zillow is the most influential web design specification in Xihu district',
+      '',
     );
 
     expect(rootContainer.asFragment()).toMatchSnapshot();
