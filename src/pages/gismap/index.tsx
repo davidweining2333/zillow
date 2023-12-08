@@ -1,13 +1,15 @@
 // import { PageContainer } from '@ant-design/pro-components';
 // import { useModel } from '@umijs/max';
-import { Drawer } from 'antd';
+import { Descriptions, Drawer, Form, InputNumber, Space } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import './index.less';
 // import type Map from "@types/leaflet";
 import L, { Map } from 'leaflet';
+import ReactECharts from 'echarts-for-react';
 // import markerIcon from 'leaflet/dist/images/marker-icon.png';
 const markerIcon = require('leaflet/dist/images/marker-icon.png');
 import 'leaflet/dist/leaflet.css';
+import { cloneDeep } from 'lodash';
 
 const GisMap: React.FC = () => {
   // const { token } = theme.useToken();
@@ -15,7 +17,47 @@ const GisMap: React.FC = () => {
   const mapRef = useRef<any>();
   const [map, setMap] = useState<Map>();
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
-  // const
+  const [selectedData, setSelectedData] = useState<any>({});
+  const [chartOptions, setChartOptions] = useState<any>({
+    xAxis: {
+      type: 'category',
+      data: [
+        '2023',
+        '2024',
+        '2025',
+        '2026',
+        '2027',
+        '2028',
+        '2029',
+        '2030',
+        '2031',
+        '2032',
+        '2033',
+        '2034',
+        '2035',
+        '2036',
+      ],
+    },
+    yAxis: {
+      type: 'value',
+    },
+    tooltip: {
+      show: true,
+      trigger: 'axis',
+    },
+    series: [
+      {
+        data: [150, 230, 224, 218, 135, 147, 260],
+        type: 'line',
+        symbolSize: 0,
+        smooth: true,
+        itemStyle: {},
+        lineStyle: {
+          color: '#0df50d',
+        },
+      },
+    ],
+  });
   const [markData] = useState<any[]>([
     {
       type: 'point',
@@ -66,28 +108,41 @@ const GisMap: React.FC = () => {
       name: 'Q4',
     },
   ]);
-  // const [cashFlowData, setCashFlowData] = useState<any[]>([
-  //   {
-  //     type: 'point',
-  //     data: [0, 0, -150, 15, 20, 24, 25, 20, 21, 22, 23, 16, 5, 0],
-  //     name: 'Q1',
-  //   },
-  //   {
-  //     type: 'point',
-  //     data: [0, 0, 0, -280, 30, 31, 32, 28, 25, 36, 34, 31, 22, 27],
-  //     name: 'Q2',
-  //   },
-  //   {
-  //     type: 'point',
-  //     data: [0, -400, 60, 60, 70, 70, 80, 50, 40, 60, 80, 30, 0, 0],
-  //     name: 'Q3',
-  //   },
-  //   {
-  //     type: 'polygon',
-  //     data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  //     name: 'Q4',
-  //   },
-  // ]);
+  const [baseInfoDescriptionsProps, setBaseInfoDescriptionsProps] = useState<any>();
+  const [form] = Form.useForm();
+  const baseInfoColumns = [
+    { dataIndex: 'name', title: 'Name' },
+    { dataIndex: 'MW', title: 'MW' },
+    { dataIndex: 'hub', title: 'Hub' },
+    { dataIndex: 'project', title: 'Project' },
+    { dataIndex: 'county', title: 'County' },
+    { dataIndex: 'state', title: 'State' },
+    { dataIndex: 'COD', title: 'COD' },
+  ];
+
+  const [cashFlowData] = useState<any[]>([
+    {
+      type: 'point',
+      data: [0, 0, -150, 15, 20, 24, 25, 20, 21, 22, 23, 16, 5, 0],
+      name: 'Q1',
+    },
+    {
+      type: 'point',
+      data: [0, 0, 0, -280, 30, 31, 32, 28, 25, 36, 34, 31, 22, 27],
+      name: 'Q2',
+    },
+    {
+      type: 'point',
+      data: [0, -400, 60, 60, 70, 70, 80, 50, 40, 60, 80, 30, 0, 0],
+      name: 'Q3',
+    },
+    {
+      type: 'polygon',
+      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      name: 'Q4',
+    },
+  ]);
+  const [monthlyCost, setMonthlyCost] = useState<number>(0);
   useEffect(() => {
     let currentMap;
     if (map) {
@@ -108,7 +163,7 @@ const GisMap: React.FC = () => {
   }, []);
 
   function renderMarks() {
-    markData.forEach(({ type, coord }) => {
+    markData.forEach(({ type, coord, ...rest }) => {
       switch (type) {
         case 'point': {
           // var marker = L.circleMarker(coord, {
@@ -119,21 +174,35 @@ const GisMap: React.FC = () => {
           //   fillOpacity: 0.5, //填充透明度
           //   radius: 20, //半径
           // }).addTo(map!);
-          const marker = L.marker(coord, { icon: L.icon({ iconUrl: markerIcon }) }).addTo(map!);
-          marker.on('click', () => {
-            // alert(33);
-            setDrawerOpen(true);
-          });
+          const marker = L.marker(coord, {
+            icon: L.icon({ iconUrl: markerIcon }),
+            title: rest.name,
+            data: rest,
+          }).addTo(map!);
+          marker.on('click', markerClick);
           break;
         }
         case 'polygon': {
-          const polygon = L.polygon(coord).addTo(map!);
-          polygon.on('click', () => {
-            setDrawerOpen(true);
-          });
+          const polygon = L.polygon(coord, {
+            title: rest.name,
+            data: rest,
+          }).addTo(map!);
+          polygon.on('click', markerClick);
           break;
         }
       }
+    });
+  }
+
+  function markerClick(data: any) {
+    setDrawerOpen(true);
+    setTimeout(() => {
+      setSelectedData(data?.target?.options.data);
+      const temp = cloneDeep(chartOptions);
+      temp.series[0].data = cashFlowData.find(
+        (item) => item.name == data?.target?.options.data.name,
+      ).data;
+      setChartOptions(temp);
     });
   }
   useEffect(() => {
@@ -142,13 +211,107 @@ const GisMap: React.FC = () => {
     }
   }, [map]);
 
+  useEffect(() => {
+    if (selectedData?.name) {
+      const temp = baseInfoColumns.map((item) => {
+        return {
+          key: item.dataIndex,
+          label: item.title,
+          children: selectedData[item.dataIndex],
+        };
+      });
+      setBaseInfoDescriptionsProps(temp);
+    }
+  }, [selectedData?.name]);
+  // useEffect(() => {
+  //   if (drawerOpen) {
+  //     setTimeout(() => {
+  //       setChartOptions(chartOptions);
+  //     })
+  //   }
+  // }, [drawerOpen]);
   return (
     <>
       <div ref={mapRef} id="map" className="h-full overflow-hidden"></div>
-      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)}></Drawer>
+      <Drawer
+        width={500}
+        forceRender
+        title={`${selectedData?.name} Info`}
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+      >
+        <div>
+          <div className="primary-title">Base Info</div>
+          <Descriptions title={selectedData.Project} items={baseInfoDescriptionsProps} />
+        </div>
+        <div style={{ width: '100%' }}>
+          <div className="primary-title">Trash Flow Trend</div>
+          <ReactECharts option={chartOptions} notMerge={true} lazyUpdate={true}></ReactECharts>
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="primary-title">Monthly cost calculator</div>
+          <div className="flex flex-col items-center">
+            <span>Estimated monthly cost</span>
+            <div>{`$${monthlyCost}`}</div>
+            <Form
+              form={form}
+              name="trigger"
+              style={{ maxWidth: 600 }}
+              layout="vertical"
+              autoComplete="off"
+              onValuesChange={(changedValues, allValues) => {
+                // if (changedValues.payment) {
+                if (changedValues?.payment?.value) {
+                  const res = Math.round((changedValues.payment.value / allValues.price) * 100);
+                  if (res != allValues.payment.ratio) {
+                    form.setFieldValue(['payment', 'ratio'], res);
+                  }
+                } else if (changedValues?.payment?.ratio) {
+                  const res = Math.round((changedValues.payment.ratio * allValues.price) / 100);
+                  if (res != allValues.payment.value) {
+                    form.setFieldValue(['payment', 'value'], res);
+                  }
+                } else if (changedValues.price) {
+                  const res = Math.round((allValues.payment.ratio * changedValues.price) / 100);
+                  if (res != allValues.payment.value) {
+                    form.setFieldValue(['payment', 'value'], res);
+                  }
+                }
+                // }
+                const res = Math.floor((allValues.price - allValues.payment.value) / 12 / 30);
+                setMonthlyCost(res);
+              }}
+            >
+              <Form.Item label="Home price" name="price">
+                <InputNumber style={{ width: '100%' }} defaultValue={0} placeholder="Home price" />
+              </Form.Item>
+              <Form.Item label="Down payment">
+                <Space.Compact>
+                  <Form.Item name={['payment', 'value']}>
+                    <InputNumber
+                      defaultValue={0}
+                      width={'100%'}
+                      addonBefore="$"
+                      placeholder="payment"
+                    />
+                  </Form.Item>
+                  <Form.Item name={['payment', 'ratio']}>
+                    <InputNumber
+                      defaultValue={0}
+                      min={0}
+                      max={100}
+                      addonAfter="%"
+                      placeholder="ratio"
+                    />
+                  </Form.Item>
+                </Space.Compact>
+              </Form.Item>
+            </Form>
+          </div>
+        </div>
+      </Drawer>
     </>
     // <PageContainer className="h-full">
-
     // </PageContainer>
   );
 };
