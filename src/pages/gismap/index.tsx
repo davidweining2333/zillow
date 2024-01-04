@@ -10,6 +10,10 @@ import ReactECharts from 'echarts-for-react';
 const markerIcon = require('leaflet/dist/images/marker-icon.png');
 import 'leaflet/dist/leaflet.css';
 import { cloneDeep } from 'lodash';
+import cashflow from '@/data/cashflow.csv';
+import GIS from '@/data/GIS.csv';
+import queue from '@/data/queue.csv';
+import Papa from 'papaparse';
 
 const GisMap: React.FC = () => {
   // const { token } = theme.useToken();
@@ -58,9 +62,9 @@ const GisMap: React.FC = () => {
       },
     ],
   });
-  const [markData] = useState<any[]>([
+  const [markData, setMarkData] = useState<any[]>([
     {
-      type: 'point',
+      type: 'POINT',
       coord: [36.377637, -120.642449],
       name: 'Q1',
       MW: '100',
@@ -71,7 +75,7 @@ const GisMap: React.FC = () => {
       COD: '2025',
     },
     {
-      type: 'point',
+      type: 'POINT',
       coord: [36.971123, -119.129794],
       name: 'Q2',
       MW: '200',
@@ -82,7 +86,7 @@ const GisMap: React.FC = () => {
       COD: '2026',
     },
     {
-      type: 'point',
+      type: 'POINT',
       coord: [37.465973, -120.249976],
       name: 'Q3',
       MW: '300',
@@ -93,7 +97,7 @@ const GisMap: React.FC = () => {
       COD: '2024',
     },
     {
-      type: 'polygon',
+      type: 'POLYGON',
       coord: [
         [35.049683, -118.543644],
         [35.011913, -118.518787],
@@ -108,9 +112,31 @@ const GisMap: React.FC = () => {
       name: 'Q4',
     },
   ]);
+  const [cashFlowData, setCashFlowData] = useState<any[]>([
+    {
+      type: 'POINT',
+      data: [0, 0, -150, 15, 20, 24, 25, 20, 21, 22, 23, 16, 5, 0],
+      name: 'Q1',
+    },
+    {
+      type: 'POINT',
+      data: [0, 0, 0, -280, 30, 31, 32, 28, 25, 36, 34, 31, 22, 27],
+      name: 'Q2',
+    },
+    {
+      type: 'POINT',
+      data: [0, -400, 60, 60, 70, 70, 80, 50, 40, 60, 80, 30, 0, 0],
+      name: 'Q3',
+    },
+    {
+      type: 'POLYGON',
+      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      name: 'Q4',
+    },
+  ]);
   const [baseInfoDescriptionsProps, setBaseInfoDescriptionsProps] = useState<any>();
   const [form] = Form.useForm();
-  const baseInfoColumns = [
+  let baseInfoColumns = [
     { dataIndex: 'name', title: 'Name' },
     { dataIndex: 'MW', title: 'MW' },
     { dataIndex: 'hub', title: 'Hub' },
@@ -119,29 +145,60 @@ const GisMap: React.FC = () => {
     { dataIndex: 'state', title: 'State' },
     { dataIndex: 'COD', title: 'COD' },
   ];
+  async function getData() {
+    const results:any[] = await Promise.all([
+      new Promise(function (resolve) {
+        Papa.parse(cashflow, {
+          download: true,
+          skipEmptyLines: true,
+          complete(results: any) {
+            // console.log(results);
+            resolve(results);
+          },
+          // rest of config ...
+        });
+      }),
+      new Promise(function (resolve) {
+        Papa.parse(GIS, {
+          download: true,
+          header: true,
+          skipEmptyLines: true,
+          complete(results: any) {
+            // console.log(results);
+            resolve(results);
+          },
+          // rest of config ...
+        });
+      }),
+      new Promise(function (resolve) {
+        Papa.parse(queue, {
+          download: true,
+          header: true,
+          skipEmptyLines: true,
+          complete(results: any) {
+            // console.log(results);
+            resolve(results);
+          },
+          // rest of config ...
+        });
+      }),
+    ]);
+    console.log(results);
+    const tempCashFlowData = 1;
+    const gisData = results[1]?.data?.map((item: any) => {
+      const gisArr = item.GIS.match(/(\w+)\s*\((.*)\)/);
+      // console.log(gisArr)
+      const markerType = gisArr[1];
+      const markerCoord = markerType == "POINT" ? gisArr[2].split(" ") : gisArr[2].split(",").map((item: string) => item.trim().split(" "));
+      return {
+        queue: item.queue,
+        type: markerType,
+        coord: markerCoord
+      }
+    });
+    console.log(gisData);
+  }
 
-  const [cashFlowData] = useState<any[]>([
-    {
-      type: 'point',
-      data: [0, 0, -150, 15, 20, 24, 25, 20, 21, 22, 23, 16, 5, 0],
-      name: 'Q1',
-    },
-    {
-      type: 'point',
-      data: [0, 0, 0, -280, 30, 31, 32, 28, 25, 36, 34, 31, 22, 27],
-      name: 'Q2',
-    },
-    {
-      type: 'point',
-      data: [0, -400, 60, 60, 70, 70, 80, 50, 40, 60, 80, 30, 0, 0],
-      name: 'Q3',
-    },
-    {
-      type: 'polygon',
-      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      name: 'Q4',
-    },
-  ]);
   const [monthlyCost, setMonthlyCost] = useState<number>(0);
   useEffect(() => {
     let currentMap;
@@ -156,7 +213,7 @@ const GisMap: React.FC = () => {
         'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
       maxZoom: 18,
     }).addTo(currentMap);
-
+    getData();
     return () => {
       map?.remove();
     };
@@ -165,7 +222,7 @@ const GisMap: React.FC = () => {
   function renderMarks() {
     markData.forEach(({ type, coord, ...rest }) => {
       switch (type) {
-        case 'point': {
+        case 'POINT': {
           // var marker = L.circleMarker(coord, {
           //   color: '#000', //线颜色
           //   weight: 5, //线宽度
@@ -182,7 +239,7 @@ const GisMap: React.FC = () => {
           marker.on('click', markerClick);
           break;
         }
-        case 'polygon': {
+        case 'POLYGON': {
           const polygon = L.polygon(coord, {
             title: rest.name,
             data: rest,
