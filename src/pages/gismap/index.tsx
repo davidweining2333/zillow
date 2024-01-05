@@ -237,6 +237,7 @@ const GisMap: React.FC = () => {
   }, []);
 
   function renderMarks() {
+    const features: any = [];
     markData.forEach(({ type, coord, ...rest }) => {
       switch (type) {
         case 'POINT': {
@@ -254,6 +255,7 @@ const GisMap: React.FC = () => {
             data: rest,
           }).addTo(map!);
           marker.on('click', markerClick);
+          features.push(marker);
           break;
         }
         case 'POLYGON': {
@@ -262,10 +264,12 @@ const GisMap: React.FC = () => {
             data: rest,
           }).addTo(map!);
           polygon.on('click', markerClick);
+          features.push(polygon);
           break;
         }
       }
     });
+    map?.fitBounds(L.featureGroup(features).getBounds());
   }
 
   function markerClick(data: any) {
