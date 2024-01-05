@@ -26,20 +26,20 @@ const GisMap: React.FC = () => {
     xAxis: {
       type: 'category',
       data: [
-        '2023',
-        '2024',
-        '2025',
-        '2026',
-        '2027',
-        '2028',
-        '2029',
-        '2030',
-        '2031',
-        '2032',
-        '2033',
-        '2034',
-        '2035',
-        '2036',
+        // '2023',
+        // '2024',
+        // '2025',
+        // '2026',
+        // '2027',
+        // '2028',
+        // '2029',
+        // '2030',
+        // '2031',
+        // '2032',
+        // '2033',
+        // '2034',
+        // '2035',
+        // '2036',
       ],
     },
     yAxis: {
@@ -51,7 +51,7 @@ const GisMap: React.FC = () => {
     },
     series: [
       {
-        data: [150, 230, 224, 218, 135, 147, 260],
+        // data: [150, 230, 224, 218, 135, 147, 260],
         type: 'line',
         symbolSize: 0,
         smooth: true,
@@ -63,76 +63,76 @@ const GisMap: React.FC = () => {
     ],
   });
   const [markData, setMarkData] = useState<any[]>([
-    {
-      type: 'POINT',
-      coord: [36.377637, -120.642449],
-      name: 'Q1',
-      MW: '100',
-      hub: 'NP15',
-      project: 'flatland',
-      county: 'king',
-      state: 'CA',
-      COD: '2025',
-    },
-    {
-      type: 'POINT',
-      coord: [36.971123, -119.129794],
-      name: 'Q2',
-      MW: '200',
-      hub: 'SP15',
-      project: 'cypress',
-      county: 'henrico',
-      state: 'CA',
-      COD: '2026',
-    },
-    {
-      type: 'POINT',
-      coord: [37.465973, -120.249976],
-      name: 'Q3',
-      MW: '300',
-      hub: 'ZP26',
-      project: 'kingstone press',
-      county: 'henrico',
-      state: 'queue',
-      COD: '2024',
-    },
-    {
-      type: 'POLYGON',
-      coord: [
-        [35.049683, -118.543644],
-        [35.011913, -118.518787],
-        [35.008184, -118.599445],
-      ],
-      MW: '400',
-      hub: 'NP15',
-      project: 'crystal farm',
-      county: 'envy',
-      state: 'CA',
-      COD: '2030',
-      name: 'Q4',
-    },
+    // {
+    //   type: 'POINT',
+    //   coord: [36.377637, -120.642449],
+    //   name: 'Q1',
+    //   MW: '100',
+    //   hub: 'NP15',
+    //   project: 'flatland',
+    //   county: 'king',
+    //   state: 'CA',
+    //   COD: '2025',
+    // },
+    // {
+    //   type: 'POINT',
+    //   coord: [36.971123, -119.129794],
+    //   name: 'Q2',
+    //   MW: '200',
+    //   hub: 'SP15',
+    //   project: 'cypress',
+    //   county: 'henrico',
+    //   state: 'CA',
+    //   COD: '2026',
+    // },
+    // {
+    //   type: 'POINT',
+    //   coord: [37.465973, -120.249976],
+    //   name: 'Q3',
+    //   MW: '300',
+    //   hub: 'ZP26',
+    //   project: 'kingstone press',
+    //   county: 'henrico',
+    //   state: 'queue',
+    //   COD: '2024',
+    // },
+    // {
+    //   type: 'POLYGON',
+    //   coord: [
+    //     [35.049683, -118.543644],
+    //     [35.011913, -118.518787],
+    //     [35.008184, -118.599445],
+    //   ],
+    //   MW: '400',
+    //   hub: 'NP15',
+    //   project: 'crystal farm',
+    //   county: 'envy',
+    //   state: 'CA',
+    //   COD: '2030',
+    //   name: 'Q4',
+    // },
   ]);
   const [cashFlowData, setCashFlowData] = useState<any[]>([
-    {
-      type: 'POINT',
-      data: [0, 0, -150, 15, 20, 24, 25, 20, 21, 22, 23, 16, 5, 0],
-      name: 'Q1',
-    },
-    {
-      type: 'POINT',
-      data: [0, 0, 0, -280, 30, 31, 32, 28, 25, 36, 34, 31, 22, 27],
-      name: 'Q2',
-    },
-    {
-      type: 'POINT',
-      data: [0, -400, 60, 60, 70, 70, 80, 50, 40, 60, 80, 30, 0, 0],
-      name: 'Q3',
-    },
-    {
-      type: 'POLYGON',
-      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      name: 'Q4',
-    },
+    // {
+    //   type: 'POINT',
+    //   data: [0, 0, -150, 15, 20, 24, 25, 20, 21, 22, 23, 16, 5, 0],
+    //   name: 'Q1',
+    // },
+    // {
+    //   type: 'POINT',
+    //   data: [0, 0, 0, -280, 30, 31, 32, 28, 25, 36, 34, 31, 22, 27],
+    //   name: 'Q2',
+    // },
+    // {
+    //   type: 'POINT',
+    //   data: [0, -400, 60, 60, 70, 70, 80, 50, 40, 60, 80, 30, 0, 0],
+    //   name: 'Q3',
+    // },
+    // {
+    //   type: 'POLYGON',
+    //   data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    //   name: 'Q4',
+    // },
   ]);
   const [baseInfoDescriptionsProps, setBaseInfoDescriptionsProps] = useState<any>();
   const [form] = Form.useForm();
@@ -146,7 +146,7 @@ const GisMap: React.FC = () => {
     { dataIndex: 'COD', title: 'COD' },
   ];
   async function getData() {
-    const results:any[] = await Promise.all([
+    const results: any[] = await Promise.all([
       new Promise(function (resolve) {
         Papa.parse(cashflow, {
           download: true,
@@ -184,19 +184,36 @@ const GisMap: React.FC = () => {
       }),
     ]);
     console.log(results);
-    const tempCashFlowData = 1;
-    const gisData = results[1]?.data?.map((item: any) => {
+    const [cashFlowHeader, ...cashFlowArr] = results[0].data;
+    const temp = cloneDeep(chartOptions);
+    cashFlowHeader.shift();
+    temp.xAxis.data = cashFlowHeader;
+    setChartOptions(temp);
+    const tempCashFlowData = cashFlowArr.map((itemArr: any[]) => {
+      const [name, ...data] = itemArr;
+      return {
+        name,
+        data,
+      };
+    });
+    setCashFlowData(tempCashFlowData);
+    const tempMarkData = results[1]?.data?.map((item: any) => {
       const gisArr = item.GIS.match(/(\w+)\s*\((.*)\)/);
       // console.log(gisArr)
       const markerType = gisArr[1];
-      const markerCoord = markerType == "POINT" ? gisArr[2].split(" ") : gisArr[2].split(",").map((item: string) => item.trim().split(" "));
+      const markerCoord =
+        markerType == 'POINT'
+          ? gisArr[2].split(' ')
+          : gisArr[2].split(',').map((item: string) => item.trim().split(' '));
+      const nodeData = results?.[2]?.data?.find((i: any) => i.queue == item.queue);
       return {
-        queue: item.queue,
+        name: item.queue,
         type: markerType,
-        coord: markerCoord
-      }
+        coord: markerCoord,
+        ...nodeData,
+      };
     });
-    console.log(gisData);
+    setMarkData(tempMarkData);
   }
 
   const [monthlyCost, setMonthlyCost] = useState<number>(0);
@@ -263,10 +280,10 @@ const GisMap: React.FC = () => {
     });
   }
   useEffect(() => {
-    if (map) {
+    if (map && markData?.length) {
       renderMarks();
     }
-  }, [map]);
+  }, [map, markData]);
 
   useEffect(() => {
     if (selectedData?.name) {
